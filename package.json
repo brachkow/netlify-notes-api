@@ -1,6 +1,6 @@
 {
   "name": "netlify-notes-api",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": ".netlify/functions/notes.mjs",
   "scripts": {
     "dev": "netlify functions:serve"
