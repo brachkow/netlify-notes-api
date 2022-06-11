@@ -17,14 +17,19 @@ const convertMarkdownToHtml = async (md) => {
   return String(html);
 };
 
+const parsePath = (path) => {
+  path = path.replace('/.netlify/functions/notes', '');
+  const params = {};
+  path.split('/').forEach((param, index) => {
+    if (param.length === 0) return;
+    const values = param.split('=');
+    params[values[0]] = values[1];
+  });
+  return { path, params };
+};
+
 export const handler = builder(async function (event) {
-  const { name } = Object.fromEntries(
-    event.path
-      .split('/')
-      .filter((p) => p.includes('='))
-      .map(decodeURIComponent)
-      .map((s) => s.split('=', 2)),
-  );
+  const { name } = parsePath(event.path).params;
 
   let markdownPage = await fs.readFile(`notes/${name}.md`, 'utf8');
 
@@ -37,4 +42,5 @@ export const handler = builder(async function (event) {
     },
     body: JSON.stringify({ content: htmlPage }),
   };
+  const { params } = parsePath(event.path);
 });
